@@ -1,47 +1,68 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../img/R-modified.png";
-import { MdPersonPin, MdShoppingCart } from "react-icons/md";
+import {
+  MdAddBox,
+  MdLogout,
 
-import {motion} from "framer-motion";
+  MdShoppingCart,
+} from "react-icons/md";
+
+import { motion } from "framer-motion";
 import Avatar from "../img/avatar.png";
 import { Link } from "react-router-dom";
 
-import { getAuth, GoogleAuthProvider, signInWithPopup }
- from "firebase/auth";
-import {app} from "../firebase.config";
-import { useStateValue } from "./context/StateProvider";
-import { actionType } from "./context/reducer";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { app } from "../firebase.config";
+import { useStateValue } from "../context/StateProvider";
+import { actionType } from "../context/reducer";
 
 
- const Header = () => {
-  
-  const firebaseAuth=getAuth(app);
 
-  const provider=new GoogleAuthProvider();
+const Header = () => {
+  const firebaseAuth = getAuth(app);
 
-  const [{user}, dispatch] = useStateValue();
+  const provider = new GoogleAuthProvider();
 
-  const login=async ()=> {
-    // const response= await signInWithPopup(firebaseAuth, provider);
+  const [{ user }, dispatch] = useStateValue();
 
-    // destructuring the response
-    const {user : {refreshToken, providerData}}=await signInWithPopup(firebaseAuth, provider);
+  const [isMenu, setIsMenu] = useState(false);
+
+  const login = async () => {
+    if (!user) {
+      // const response= await signInWithPopup(firebaseAuth, provider);
+
+      // destructuring the response
+      const {
+        user: { refreshToken, providerData },
+      } = await signInWithPopup(firebaseAuth, provider);
+
+      dispatch({
+        type: actionType.SET_USER,
+        user: providerData[0],
+      });
+
+      // user data gets set to null when the page is refreshed, to avoid that user data has to be stored in localstorage
+
+      localStorage.setItem("user", JSON.stringify(providerData[0]));
+
+      // console.log(response);
+    } else {
+      setIsMenu(!isMenu);
+    }
+  };
+
+  const logout=async() =>{
+    setIsMenu(false);
+    localStorage.clear();
 
     dispatch({
-      type: actionType.SET_USER,
-      user: providerData[0]
-    });
-
-    // user data gets set to null when the page is refreshed, to avoid that user data has to be stored in localstorage
-
-    localStorage.setItem('user', JSON.stringify(providerData[0]));
-
-    // console.log(response);
+      type:actionType.SET_USER,
+      user:null,
+    })
   }
 
-
   return (
-    <header className="fixed z-50 w-screen p-6 px-16 bg-headerBg">
+    <header className="fixed z-50 w-screen p-3 px-4 md:p-6 md:px-16 bg-headerBg">
       {/* desktop and tablet */}
       <div className="hidden md:flex w-full h-full items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
@@ -53,20 +74,25 @@ import { actionType } from "./context/reducer";
         </Link>
 
         <div className="flex items-center">
-          <ul className="flex items-center gap-8">
-            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer">
+          <motion.ul
+            initial={{ opacity: 0, x: 200 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 200 }}
+            className="flex items-center gap-8"
+          >
+            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer" onClick={()=> setIsMenu(false)}>
               Menu
             </li>
-            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer">
+            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer" onClick={()=> setIsMenu(false)}>
               Home
             </li>
-            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer">
+            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer" onClick={()=> setIsMenu(false)}>
               About us
             </li>
-            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer">
+            <li className="text-base text-textColor hover:text-neutral-500 duration-100 transition-all ease-in-out cursor-pointer" onClick={()=> setIsMenu(false)}>
               Service
             </li>
-          </ul>
+          </motion.ul>
 
           <div className="relative flex items-center justify-center">
             <MdShoppingCart className="text-textColor text-2xl ml-8 cursor-pointer hover:text-lime-100" />
@@ -74,23 +100,118 @@ import { actionType } from "./context/reducer";
               <p className="text-xs  text-white font-semibold">2</p>
             </div>
           </div>
-{/* 
+          {/* 
           <motion.MdPersonPin whileTap={{scale:0.6}} className="text-textColor text-2xl ml-8 cursor-pointer hover:text-lime-100 w-10 min-w-[30px] h-10 min-h-[30px] drop-shadow-xl" /> */}
 
           <div className="relative">
-          <motion.img
-            src={user? user.photoURL : Avatar} whileTap={{scale: 0.6}} referrerPolicy="no-referrer" 
-            className="ml-8 w-10 min-w-[40px] h-10 min-h-[40px] cursor-pointer drop-shadow-2xl rounded-full"
-            alt="userprofile"
-            onClick={login}
-          />
+            <motion.img
+              src={user ? user.photoURL : Avatar}
+              whileTap={{ scale: 0.6 }}
+              referrerPolicy="no-referrer"
+              className="ml-8 w-10 min-w-[40px] h-10 min-h-[40px] cursor-pointer drop-shadow-2xl rounded-full"
+              alt="userprofile"
+              onClick={login}
+            />
+
+            {isMenu && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                className="w-40 bg-primary shadow-xl rounded-lg flex flex-col absolute top-12 -right-0"
+              >
+                {user && user.email === "rashika.s@hummingwave.com" && (
+                  <Link to="/createItem">
+                    <p className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-out text-textColor text-base">
+                      {" "}
+                      New Item <MdAddBox className="w-18" />{" "}
+                    </p>
+                  </Link>
+                )}
+
+                <p className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-out text-textColor text-base" onClick={logout}>
+                  {" "}
+                  Logout <MdLogout className="w-18" />{" "}
+                </p>
+              </motion.div>
+            )}
           </div>
-      
         </div>
       </div>
 
       {/* mobile */}
-      <div className="flex md:hidden w-full h-full bg-blue-500"></div>
+      <div className="flex items-center justify-between md:hidden w-full h-full">
+
+
+        <div className="relative flex items-center justify-center">
+
+            <MdShoppingCart className="text-textColor text-2xl ml-1 onClick={()=> setIsMenu(false)} cursor-pointer hover:text-lime-100" />
+            <div className="absolute -top-2 -right-2  w-5 h-5 rounded-full bg-cartNumBg flex items-center justify-center">
+              <p className="text-xs  text-white font-semibold">2</p>
+            </div>
+          </div>
+
+          <Link to="/" className="flex items-center gap-2">
+          <img src={Logo} className="w-12 object-cover" alt="logo" />
+          <p className="text-headingColor text-xl font-bold hover:text-stone-500">
+            {" "}
+            Veg Store{" "}
+          </p>
+        </Link>
+
+        <div className="relative">
+          <motion.img
+            src={user ? user.photoURL : Avatar}
+            whileTap={{ scale: 0.6 }}
+            referrerPolicy="no-referrer"
+            className="ml-8 w-10 min-w-[40px] h-10 min-h-[40px] cursor-pointer drop-shadow-2xl rounded-full"
+            alt="userprofile"
+            onClick={login}
+          />
+
+          {isMenu && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              className="w-40 rounded-md bg-primary shadow-xl flex flex-col absolute top-12 -right-0"
+            >
+              {user && user.email === "rashika.s@hummingwave.com" && (
+                <Link to="/createItem">
+                  <p className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-out text-textColor text-base">
+                    {" "}
+                    New Item <MdAddBox className="w-18" />{" "}
+                  </p>
+                </Link>
+              )}
+
+              <ul className="flex flex-col">
+                <li
+                  className="text-base text-textColor hover:bg-slate-100 
+                hover:text-slate-500  duration-100 transition-all ease-out cursor-pointer px-4 py-2" onClick={()=> setIsMenu(false)}
+                >
+                  Menu
+                </li>
+                <li className="text-base text-textColor hover:bg-slate-100  duration-100 transition-all hover:text-slate-500 ease-in-out cursor-pointer px-4 py-2" onClick={()=> setIsMenu(false)}>
+                  Home
+                </li>
+                <li className="text-base text-textColor hover:bg-slate-100  duration-100 hover:text-slate-500 transition-all ease-in-out cursor-pointer px-4 py-2" onClick={()=> setIsMenu(false)}>
+                  About us
+                </li>
+                <li className="text-base text-textColor hover:bg-slate-100  duration-100 transition-all hover:text-slate-500 ease-in-out cursor-pointer px-4 py-2" onClick={()=> setIsMenu(false)}>
+                  Service
+                </li>
+              </ul>
+
+              <p className="m-2 p-2 rounded-md  justify-center shadow-md flex items-center gap-3 cursor-pointer hover:bg-slate-100 hover:text-gray-500 transition-all duration-100 ease-out text-gray-100 text-base
+               bg-slate-500 " onClick={logout}>
+                {" "}
+                Logout <MdLogout className="w-18" />{" "}
+              </p>
+            </motion.div>
+          )}
+        </div>
+      </div>
     </header>
   );
 };
