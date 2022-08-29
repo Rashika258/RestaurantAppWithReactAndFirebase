@@ -34,7 +34,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
   return (
     <div
       ref={rowContainer}
-      className={`w-full flex  justify-center items-center gap-3 my-12   scroll-smooth bg-rowBg ${
+      className={`w-full flex rounded-md justify-center items-center gap-3 my-12 scroll-smooth bg-rowBg pl-0 ${
         flag
           ? "overflow-x-scroll scrollbar-none"
           : "overflow-x-hidden flex-wrap justify-center"
@@ -44,11 +44,11 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         data.map((item) => (
           <div
             key={item?.id}
-            className="flex flex-col items-center justify-evenly relative h-[350px] ml-10 w-300 min-w-[300px] my-12 md:w-340 md:h-[420px] md:min-w-[340px] py-2 px-4 bg-textGrayHighLightcolor rounded-3xl backdrop-blur-lg  hover:drop-shadow-xl"
+            className="flex flex-col items-center justify-evenly relative h-[200px] w-300 min-w-[300px] my-12 md:w-340 md:h-[230px] md:min-w-[340px] py-2 px-4 bg-card rounded-3xl backdrop-blur-lg  hover:drop-shadow-xl"
           >
             <div className="w-full flex items-center justify-between">
               <motion.div
-                className="w-56 h-96 -mt-8 drop-shadow-2xl"
+                className="w-40 h-40 -mt-8 drop-shadow-2xl"
                 whileHover={{ scale: 1.2 }}
               >
                 <img
@@ -66,7 +66,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
               </motion.div>
             </div>
 
-            <div className="px-10 pt-0 w-full flex flex-col items-end justify-items-end -mt-8">
+            <div className="pt-0 w-full flex flex-col items-end justify-items-end -mt-8">
               <p className="text-textColor hover:opacity-60 font-semibold text-xl md:text-lg">
                 {item?.title}
               </p>
@@ -87,7 +87,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         ))
       ) : (
         <div className="w-full flex flex-col items-center justify-center">
-          <img src={NotFound} className="h-340" />
+          <img src={NotFound} className="h-300" />
 
           <p className="text-xl text-headingColor font-semibold my-2">
             Items Not Available
