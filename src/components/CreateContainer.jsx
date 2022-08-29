@@ -4,7 +4,6 @@ import {
   MdCloudUpload,
   MdDelete,
   MdFastfood,
-  MdFoodBank,
   MdViewList,
 } from "react-icons/md";
 import { ImPriceTags } from "react-icons/im";
@@ -17,7 +16,6 @@ import { storage } from "../firebase.config";
 import {
   deleteObject,
   getDownloadURL,
-  getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -113,6 +111,7 @@ const CreateContainer = () => {
           title: title,
           imageURL: imageAsset,
           category: category,
+          calories:calories,
           qty: 1,
           price:price
         };

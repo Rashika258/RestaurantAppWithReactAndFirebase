@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { CreateContainer, Header, MainContainer } from "./components";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {  Route, Routes } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useStateValue } from "./context/StateProvider";
 import { getAllFoodItems } from "./utils/firebaseFunctions";
