@@ -34,6 +34,6 @@ To use this app, follow these steps:
 
 - React: Frontend development.
 - Firebase: Backend services, authentication, and data storage.
-- [Payment Gateway Name]: Integration for secure online payments (please specify the actual payment gateway used).
+- Payment Gateway : Integration for secure online payments (please specify the actual payment gateway used).
 - Netlify: Hosting the live application.
 
